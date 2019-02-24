@@ -4,7 +4,7 @@
 #include"output.h"
 
 using namespace std;
-int main(){
-    print_num(10);
-    return 0;
+void print_num(int num){
+    cout<<num<<endl;
+    return ;
 }
