@@ -6,6 +6,29 @@
 
 #define startDayTime 14
 #define endDayTime 41
+#define sepratorCharacter ','
+#define starterBox "+---------"
+#define insideBox "----------"
+#define endBox "---------+"
+#define beginnerDay 0
+#define endDay 7
+#define saturday "Saturday"
+#define sunday "Sunday"
+#define monday "Monday"
+#define tuesday "Tuesday"
+#define wednesday "Wednesday"
+#define thursday "Thursday"
+#define friday "Friday"
+#define starterTitleInfo "# "
+#define starterDayInfo "## "
+#define sat "SAT"
+#define sun "SUN"
+#define mon "MON"
+#define tue "TUE"
+#define wed "WED"
+#define thu "THU"
+#define fri "FRI"
+#define leftAndRightBorder '|'
 using namespace std;
 
 typedef string CourseId;
@@ -15,13 +38,19 @@ typedef vector< vector<string> > Table;
 struct CourseTime{
     string id, code, name;
     vector<string>day, startTime, endTime;
+    string giveCode(){
+        string answer = code;
+        if(code[0] == '0')
+            answer = code[1];
+        return answer;
+    }
 };
 
 
 void addCourseToCourseName(string course, map<CourseId, CourseName>& courseName){
     string id,name;
     int index = 0;
-    while(course[index] != ','){
+    while(course[index] != sepratorCharacter){
         id += course[index];
         index++;
     }
@@ -38,7 +67,7 @@ void inputFromFile(string fileName, vector<string>& lines){
     ifstream fileStream;
     fileStream.open(fileName);
     string str="";
-    while(getline(fileStream,str)){
+    while(getline(fileStream, str)){
         lines.push_back(str);
     }
     fileStream.close();
@@ -86,15 +115,15 @@ void parseToCourseTime(vector<CourseTime>& courseTime, map<CourseId, CourseName>
 }
 
 void printTitle(string title){
-    cout<<"# ";
+    cout<<starterTitleInfo;
     for(int index = 0;index < title.size();index++)
         cout<<title[index];
     cout<<endl<<endl;
 }
 
 void printInformationDay(int day){
-    string dayName[] = {"Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-    cout<<"## "<<dayName[day]<<endl<<endl;
+    string dayName[] = { saturday, sunday, monday, tuesday, wednesday, thursday, friday};
+    cout<<starterDayInfo<<dayName[day]<<endl<<endl;
     for(int i = 7;i <= 20;i++){
         printf("%02d:00     ",i);
         printf("%02d:30",i);
@@ -108,8 +137,8 @@ void printInformationDay(int day){
 }
 
 int getIdDay(string day){
-    string dayName[] = {"SAT", "SUN", "MON", "TUE", "WED", "THU", "FRI"};
-    for(int dayNum = 0;dayNum < 7; dayNum++){
+    string dayName[] = { sat, sun, mon, tue, wed, thu, fri};
+    for(int dayNum = beginnerDay;dayNum < endDay; dayNum++){
         if(day == dayName[dayNum])
             return dayNum;
     }
@@ -131,6 +160,7 @@ bool checkCanAdd(vector<string>& line, int startIdTime, int endIdTime){
     return couresCanAdd;
 
 }
+
 void pushCourseNameToTable(Table& tableTime, CourseTime courseTime, int index){
     int startIdTime = getIdTime(courseTime.startTime[index]),
         endIdTime = getIdTime(courseTime.endTime[index]), 
@@ -141,7 +171,7 @@ void pushCourseNameToTable(Table& tableTime, CourseTime courseTime, int index){
         tableTime.push_back(vector<string>(100));
     lineIndex++;
     for(int houreId = startIdTime ; houreId < endIdTime ; houreId++)
-        tableTime[lineIndex][houreId] = courseTime.name + " (" + courseTime.code + ")" ;
+        tableTime[lineIndex][houreId] = courseTime.name + " (" + courseTime.giveCode() + ")" ;
 }
 
 void createTable(Table& tableTime, vector<CourseTime>& courseTime, int day){
@@ -151,69 +181,84 @@ void createTable(Table& tableTime, vector<CourseTime>& courseTime, int day){
                pushCourseNameToTable(tableTime, course, index);
 }
 
+string ignorExtraSpace(string str){
+    int index = str.size() - 1;
+    while(index >= 0 && str[index] == ' ')
+        index--;
+    index++;
+    str.erase(index);
+    return str;
+}
+
 void printBorder(vector<string>& line){
-    cout<<"  ";
+    string answer = ""; 
+    answer += "  ";
     for(int index = startDayTime ; index <= endDayTime ; index ++){
         if(line[index] != ""){
             if(index == startDayTime || line[index-1] != line[index])
-                cout<<"+---------";
+                answer += starterBox;
             else if(index == endDayTime || line[index+1] != line[index])
-                cout<<"---------+";
+                answer += endBox;
             else
-                cout<<"----------";
+                answer += insideBox;
         }else if(index != endDayTime)
-            cout<<"          ";
+            answer += "          ";
         else
-            cout<<"   ";
+            answer += "   ";
     }
-    cout<<endl;
+    answer = ignorExtraSpace(answer);
+    cout<<answer;
 }
-void printCourseName(int sizeContent, string courseName){
+string getStringCourseName(int sizeContent, string courseName){
+    string answer = "";
     int numberWhiteSpace = sizeContent - courseName.size()-2;
-    cout<<'|';
+    answer += leftAndRightBorder;
     for(int i = 0 ;i < (numberWhiteSpace + 1) / 2;i++)
-        cout<<" ";
-    cout<<courseName;
+        answer += " ";
+    answer += courseName;
     for(int i = 0;i < numberWhiteSpace / 2 ;i++)
-        cout<<" ";
-    cout<<'|';
-
+        answer += " ";
+    answer += leftAndRightBorder;
+    return answer ;
 }
 
 void printContent(vector<string>& line){
-    cout<<"  ";
+    string answer = "";
+    answer += "  ";
     for(int index = startDayTime;index < endDayTime;index++){
         if(line[index] == ""){
-            cout<<"          ";
+            answer += "          ";
         }else{
             int startCourseTime = index;
             while(index+1 <= endDayTime && line[index+1] == line[index])
                 index++;
             int endCourseTime = index;
             int sizeContent = (endCourseTime - startCourseTime + 1)*10;
-            printCourseName(sizeContent, line[index]);
+            answer += getStringCourseName(sizeContent, line[index]);
         }
     }
-    cout<<"   ";
-    cout<<endl;
+    answer +="   ";
+    answer = ignorExtraSpace(answer);
+    cout<<answer<<endl;
 
 }
 void printDayCourse(Table& tableTime, int day){
     for(auto line : tableTime){
         printBorder(line);
+        cout<<endl;
         printContent(line);
         printBorder(line);
-    }
-    if(day != 6)
         cout<<endl;
+    }
 }
 void printTable(vector<CourseTime>& courseTime, string title){
     printTitle(title);
-    for(int day = 0;day < 7;day++){
+    for(int day = beginnerDay;day < endDay;day++){
         printInformationDay(day);
         Table tableTime;
         createTable(tableTime, courseTime, day);
         printDayCourse(tableTime,day);
+        cout<<endl;
     }
 }
 
