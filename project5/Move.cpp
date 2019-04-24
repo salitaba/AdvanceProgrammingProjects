@@ -39,8 +39,11 @@ bool Move::isGoRight(){ return ax > 0; }
 
 void Move::dontJump(){ jumped = false; }
 
-void Move::jump(){ 
-    vy = -500;
+void Move::jump(){
+    if(onGround == true){
+        vy = -600;
+        onGround = false;
+    }
     jumped = true;
 }
 
