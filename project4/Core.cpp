@@ -38,15 +38,25 @@ int Core::getNumberOfThread(){
 
 void Core::showStat(){
 	cout<< CORENUMBER << id << endl;
-	for(auto thread : threads)
+	for(int i = 0; i < threads.size(); i++){
+		Thread* thread = threads.front();
 		thread->showStat();
+		threads.pop();
+		threads.push(thread);
+
+	}
 
 }
 
 void Core::printLog(){
 	if(logs.size()){
 		cout<< CORENUMBER << id << endl;
-		cout<< log.front();
+		cout<< logs.front();
 		logs.pop();
+		cout<<endl;
 	}
+}
+
+bool Core::haveLog(){
+	return logs.size() > 0;
 }

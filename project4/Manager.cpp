@@ -1,42 +1,50 @@
 #include"Manager.h"
+
+#define ADDCORE "add_core"
+#define ADDPROCESS "add_process"
+#define RUNCORES "run_cores"
+#define SHOWCORESSTAT "show_cores_stat"
+#define FINISHTASKS "finish_tasks"
+
 bool isNumber(char c){
-	return (command[index] >= '0' && command[index] <= '9');
+	return (c >= '0' && c <= '9');
 }
-vector<int> covertToNumber(string command){
+vector<int> convertToNumber(string command){
 	int index = 0, number = 0;
 	vector<int> numbers;
 	while(index < command.size()){
-		while(!(isNumber(command[index])) && index < command.size() )
+		while(index < command.size() && !(isNumber(command[index])))
 			index++;
 		number = 0;
-		while(isNumber(command[index] && index < command.size())){
+		while(index < command.size() && isNumber(command[index])){
 			number = number * 10 + command[index] - '0';
 			index++;
 		}
 		numbers.push_back(number);
 	}
+	return numbers;
 }
 
-void addProcess(string command, Cpu& cpu, Processes& processes){
+void addProcess(string command, Cpu* cpu, Processes& processes){
 	int numberOfProcess = processes.size();
-	processes.push_back( &Process(_id = numberOfProcess + 1 ));
-	vector<int> numbers = covertToNumber(command);
+	Process* newProcess = new Process(numberOfProcess + 1);
+	processes.push_back( newProcess );
+	vector<int> numbers = convertToNumber(command);
 	for(int i = 1;i < numbers.size();i++){
-		processes.back()->addThread(numberOfTimeSlice = numbers[i]);
-		Thread* newThread = processes.back()->getThread(_id = i);
+		processes.back()->addThread(numbers[i]);
+		Thread* newThread = processes.back()->getThread(i);
 		Core* coreWithMimTask = cpu->getCoreWithMinTask();
 		coreWithMimTask->addThread(newThread);
 	}
 }
 
 string getTopWord(string line){
-	int indexOfFirstSpace = line.find_fist_of(' ');
+	int indexOfFirstSpace = line.find_first_of(' ');
 	return line.substr(0, indexOfFirstSpace);
 }
 
-void doCommand(string command, Cpu& cpu, Processes& processes){
-	srting masterCommand = getTopWord(command);
-
+void doCommand(string command, Cpu* cpu, Processes& processes){
+	string masterCommand = getTopWord(command);
 	if(masterCommand == ADDCORE){
 		cpu->addCore();
 		cpu->showCoreAdded();
@@ -48,11 +56,11 @@ void doCommand(string command, Cpu& cpu, Processes& processes){
 	else if(masterCommand == SHOWCORESSTAT){
 		cpu->showCoresStat();
 	}
-	else if(command == RUNCORES){
+	else if(masterCommand == RUNCORES){
 		cpu->runCores();
 		cpu->showTaskDone();
 	}
-	else if(command == FINISHTASKS){
+	else if(masterCommand == FINISHTASKS){
 		cpu->finishTasks();
 		cpu->showFinishingCore();
 	}

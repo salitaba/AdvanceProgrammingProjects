@@ -1,7 +1,9 @@
 #include<iostream>
 #include<string>
 #include<vector>
+
 #include"Thread.h"
+
 using namespace std;
 
 class Process
@@ -14,5 +16,5 @@ public:
 	int getId();
 private:
 	int id;
-	vector< Thread* > Threads;
+	vector< Thread* > threads;
 };

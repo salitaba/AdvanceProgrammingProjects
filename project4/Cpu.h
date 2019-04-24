@@ -5,16 +5,17 @@
 using namespace std;
 class Cpu
 {
-private:
+public:
 	Core* getCore(int id);
 	int getNumberOfCore();
 	void addCore();
 	void showCoresStat();
 	void showCoreAdded();
+	void runCores();
 	Core* getCoreWithMinTask();
 	void showTaskDone();
 	void finishTasks();
 	void showFinishingCore();
-public:
+private:
 	vector< Core* > cores;
 };

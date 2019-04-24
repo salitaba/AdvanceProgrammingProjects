@@ -1,6 +1,7 @@
 #include<iostream>
+#include<string>
+#include<vector>
 
-#include"Cpu.h"
 #include"Manager.h"
 
 typedef vector< Process* > Processes;
@@ -8,8 +9,9 @@ typedef vector< Process* > Processes;
 using namespace std;
 int main(){
 	Cpu cpu;
+	Cpu* cpuAddress = &cpu;
 	Processes processes;
 	string command;
-	while(get_line(cin, command))
-		doCommand(command, cpu, processes);
+	while(getline(cin, command))
+		doCommand(command, cpuAddress, processes);
 }

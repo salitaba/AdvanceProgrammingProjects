@@ -1,8 +1,10 @@
-#include<iostraem>
+#include<iostream>
 #include<vector>
 #include<string>
-#include<map>
+
 #include"Cpu.h"
+
+#include"Process.h"
 
 #define ADDCORE "add_core"
 #define ADDPROCESS "add_process"
@@ -15,12 +17,8 @@ using namespace std;
 
 vector<int> convertToNumber(string command);
 
-void addProcess(string command, Cpu& cpu, Processes& processes);
+void addProcess(string command, Cpu* cpu, Processes& processes);
 
 string getTopWord(string line);
 
-void doCommand(string command, Cpu& cpu,Processes& processes);
-
-
-
-
+void doCommand(string command, Cpu* cpu,Processes& processes);

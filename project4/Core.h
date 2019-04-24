@@ -1,10 +1,12 @@
-#include<iostraem>
+#include<iostream>
 #include<vector>
 #include<string>
-#include"thread.h"
+#include<queue>
+
+#include"Thread.h"
 using namespace std;
 class Core{
-private:
+public:
 	Core(int _id);
 	void addThread(Thread* thread);
 	void processOneSliceTime();	
@@ -13,9 +15,9 @@ private:
 	void showStat();
 	void logDoThread(Thread* thread);
 	void printLog();
-
-public:
+	bool haveLog();
+private:
 	int id;
 	queue< string > logs;
-	queue< Thread* > threads;
+	queue<Thread*> threads;
 };

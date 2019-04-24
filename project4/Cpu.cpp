@@ -14,8 +14,8 @@ int Cpu::getNumberOfCore(){
 }
 
 void Cpu::addCore(){
-	Core core(_id = cores.size() + 1);
-	cores.push_back(&core);
+	Core* core = new Core(cores.size() + 1);
+	cores.push_back(core);
 }
 
 void Cpu::runCores(){
@@ -36,9 +36,9 @@ void Cpu::showCoreAdded(){
 Core* Cpu::getCoreWithMinTask(){
 	Core* coreAnswer = NULL;
 	for(auto core : cores)
-		if(answer == NULL || core->getNumberOfThread() < coreAnswer->getNumberOfThread() )
+		if(coreAnswer == NULL || core->getNumberOfThread() < coreAnswer->getNumberOfThread() )
 			coreAnswer = core ;					
-	return core;
+	return coreAnswer;
 }
 
 void Cpu::showTaskDone(){
@@ -66,14 +66,12 @@ void Cpu::showFinishingCore(){
 		timeSlice++;
 		finished = true; 
 		for(auto core : cores)
-			if(core->haveLog)
+			if(core->haveLog())
 				finished = false;
 		if(!finished){
 			cout<< TIMESLICE << timeSlice << endl;
 			for(auto core : cores)
 				core->printLog();
-			cout<< DOT << endl << DOT << endl << DOT << endl;
 		}
 	}
 }
-
