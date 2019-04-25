@@ -8,8 +8,10 @@ GameManager::GameManager(Map map, Window &_window, int _screenRefreshRate)
 }
 
 void GameManager::start(){
+    window.play_music("assets/sounds/Super Mario Bros. theme music.mp3");
     bool online = true ;
     while(online == true){
+        window.clear();
         this->handleEvent();
         objects.updatePosition(screenRefreshRate, window);
         objects.fixCrashing();

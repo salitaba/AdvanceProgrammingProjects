@@ -21,7 +21,12 @@ public:
         KOPA,
         PIPE,
         FLAG,
-        NUMBER_OFTYPE
+        PIPE_LEFT,
+        PIPE_RIGHT,
+        PIPE_TOP_LEFT,
+        PIPE_TOP_RIGHT,
+        NUMBER_OFTYPE,
+        
     };
 
     enum Char{

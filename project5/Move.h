@@ -5,6 +5,7 @@
 
 class Move{
 public:
+    Move(Point position);
     Point goRight(Point position);
     void goRight();
     void goLeft();
@@ -18,7 +19,11 @@ public:
     int getAX();
     bool isBeforTowardRight();
     void downAccident();
+    void leftAccident();
+    Point returnPreviuseLocation();
+    void upAccident();
 private:
+    Point previuseLocation;
     bool beforTowardRight = true;
     double vx = 0, vy = 0;
     double g = 1000, ax = 0, ay = 0, fx = 1000;

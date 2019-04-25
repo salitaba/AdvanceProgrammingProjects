@@ -28,6 +28,7 @@ public:
     void jumpMario();
     void dontJumpMario();
     void fixCrashing();
+    void addPipe(Point position, int type);
 private:
     Background background;
     Mario mario;

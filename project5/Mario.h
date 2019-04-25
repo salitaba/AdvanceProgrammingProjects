@@ -11,7 +11,7 @@
 class Mario{
 public:
     Mario();
-    Mario(Point);
+    Mario(Point position);
     Point getPosition();
     void show(Window &window, Point cameraPosition);
     void goRight();

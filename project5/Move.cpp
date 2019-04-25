@@ -2,7 +2,10 @@
 
 using namespace std;
 
+Move::Move(Point position):previuseLocation(position){}
+
 Point Move::updatePosition(int refreshRate,Point position){
+    previuseLocation = position;
     if(vx < 0)
         beforTowardRight = false;
     else if(vx > 0)
@@ -56,4 +59,16 @@ bool Move::isBeforTowardRight(){return beforTowardRight; }
 void Move::downAccident(){
     vy = 0;
     onGround = true;
+}
+
+void Move::leftAccident(){
+    vx = 0;
+}
+
+Point Move::returnPreviuseLocation(){
+    return previuseLocation;
+}
+
+void Move::upAccident(){
+    vy = 0;
 }

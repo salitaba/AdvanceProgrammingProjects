@@ -15,7 +15,7 @@ class Object;
 
 class Map{
 public:
-    Map(std::string sourceAddress);
+    Map(std::string sourceAddress); 
     int getWidth();
     int getHeight();
     char getCharXY(int x,int y);

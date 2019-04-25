@@ -1,8 +1,16 @@
 #ifndef PIPE_H
 #define PIPE_H
 
-class Pipe{
+#include"RSDL/src/rsdl.hpp"
+#include"ObjectCode.h"
 
+class Pipe{
+public:
+    Pipe(Point _position, int _type);
+    void show(Window &window, Point cameraPosition);
+private:
+    Point position;
+    int type;
 };
 
 

@@ -25,6 +25,21 @@ Object Map::createObjects(){
                 case ObjectCode::LITTLE_GOMBA_CHAR:
                     break;
                 case ObjectCode::PIPE_CHAR:
+                    if(map[i][j + 1] == ObjectCode::PIPE_CHAR){
+                        if(map[i - 1][j] == ObjectCode::PIPE_CHAR){
+                            objects.addPipe(cell, ObjectCode::PIPE_LEFT);
+                        }else{
+                            objects.addPipe(cell, ObjectCode::PIPE_TOP_LEFT);
+                        }
+                    }else{
+                        if(map[i - 1][j] == ObjectCode::PIPE_CHAR){
+                            objects.addPipe(cell, ObjectCode::PIPE_RIGHT);
+                        }else{
+                            objects.addPipe(cell, ObjectCode::PIPE_TOP_RIGHT);
+                        }
+
+                    }
+
                     break;
                 case ObjectCode::KOPA_CHAR:
                     break;

@@ -36,9 +36,11 @@ Object::Object():cameraPosition(0,0){}
 
 void Object::updateScreen(Window &window){
     background.show(window, cameraPosition);
-    mario.show(window, cameraPosition);
+    for(auto pipe : pipes)
+        pipe.show(window, cameraPosition);
     for(auto block : blocks)
         block.show(window, cameraPosition);
+    mario.show(window, cameraPosition);
     window.update_screen();
 }
 
@@ -85,3 +87,8 @@ void Object::fixCrashing(){
         mario.fixCrashingWithBlock(topLeft, downRight);
     }
 }
+
+void Object::addPipe(Point position, int type){
+    pipes.push_back(Pipe(position, type));
+}
+
