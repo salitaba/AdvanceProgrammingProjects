@@ -5,8 +5,8 @@ Crash::Crash(Point _previuseTopLeft, Point _topLeft1 ,Point _downRight1,Point _t
         previuseTopLeft(_previuseTopLeft){}
 
 Point Crash::leftAccident(){
-    if (topLeft1.x < topLeft2.x && downRight2.x < downRight1.x && 
-        !(previuseTopLeft.y > downRight2.y || previuseTopLeft.y > downRight1.y))
+    if (topLeft1.x >= topLeft2.x && topLeft1.x <= downRight2.x && 
+        !(topLeft1.y > downRight2.y || topLeft1.y < topLeft2.y))
             return Point(previuseTopLeft.x, topLeft1.y);
     return topLeft1;
     // if(previuseTopLeft.x < topLeft1.x)
@@ -33,17 +33,22 @@ Point Crash::leftAccident(){
     // }
 }
 
-bool Crash::righAccident(){
+Point Crash::righAccident(){
     // return topLeft2.x < downRight1.x && topLeft1.x < downRight2.x &&
     //     !(topLeft1.y > downRight2.y || topLeft2.y > downRight1.y);
+    int width = downRight1.x - topLeft1.x;
+    if(downRight1.x >= topLeft2.x && downRight1.x <= downRight2.x &&
+        !(topLeft1.y > downRight2.y || topLeft1.y < topLeft2.y))
+        return Point(previuseTopLeft.x, topLeft1.y);
+    return topLeft1;
 }
 
 Point Crash::downAccident(){
-    if(downRight1.y > topLeft2.y && topLeft1.y < topLeft2.y &&
+    if(downRight1.y >= topLeft2.y && topLeft1.y <= topLeft2.y &&
             !(topLeft1.x > downRight2.x || downRight1.x < topLeft2.x)){
         int height = downRight1.y - topLeft1.y ;
-        // return Point(topLeft1.x,topLeft2.y - height);
-        return Point(topLeft1.x,previuseTopLeft.y);
+        return Point(topLeft1.x,topLeft2.y - height);
+        // return Point(topLeft1.x,previuseTopLeft.y);
     }
     return topLeft1;
 }

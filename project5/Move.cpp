@@ -42,12 +42,14 @@ bool Move::isGoRight(){ return ax > 0; }
 
 void Move::dontJump(){ jumped = false; }
 
-void Move::jump(){
+bool Move::jump(){
     if(onGround == true){
         vy = -600;
         onGround = false;
+        return true;
     }
     jumped = true;
+    return false;
 }
 
 int Move::getVX(){ return vx; }
@@ -57,7 +59,7 @@ int Move::getAX(){ return ax; }
 bool Move::isBeforTowardRight(){return beforTowardRight; }
 
 void Move::downAccident(){
-    vy = 0;
+    vy = 100;
     onGround = true;
 }
 

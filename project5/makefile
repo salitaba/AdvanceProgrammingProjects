@@ -1,8 +1,8 @@
 
 CC = g++ -std=c++11
 FLAG = -l SDL2 -l SDL2_image -l SDL2_ttf -l SDL2_mixer
-main: main.o Screen.o Map.o Cell.o Object.o Background.o Flag.o Pipe.o Mario.o GameManager.o Kopa.o Block.o rsdl.o ObjectCode.o Move.o Crash.o Line.o
-	$(CC) -o game main.o Screen.o Map.o Cell.o Object.o Background.o Flag.o Pipe.o Mario.o GameManager.o Kopa.o Block.o rsdl.o ObjectCode.o Move.o Crash.o Line.o $(FLAG)
+main: main.o Screen.o Map.o Cell.o Object.o Background.o Flag.o Pipe.o Mario.o GameManager.o Kopa.o Block.o rsdl.o ObjectCode.o Move.o Crash.o Line.o Accident.o
+	$(CC) -o game main.o Screen.o Map.o Cell.o Object.o Background.o Flag.o Pipe.o Mario.o GameManager.o Kopa.o Block.o rsdl.o ObjectCode.o Move.o Crash.o Line.o Accident.o $(FLAG)
 
 main.o: main.cpp Screen.o Map.o Cell.o Object.o Background.o Flag.o Pipe.o Mario.o GameManager.o Kopa.o Block.o rsdl.o ObjectCode.o
 	$(CC) -c main.cpp
@@ -55,6 +55,8 @@ Crash.o: Crash.cpp Crash.h
 Line.o: Line.cpp Line.h
 	$(CC) -c Line.cpp
 
+Accident.o: Accident.cpp Accident.h
+	$(CC) -c Accident.cpp
 .PHONY: clean
 clean:
 	rm *.o

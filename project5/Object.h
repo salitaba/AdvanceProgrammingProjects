@@ -11,6 +11,7 @@
 #include"Flag.h"
 #include"Map.h"
 #include"Block.h"
+#include"Accident.h"
 
 class Object{
 public:
@@ -25,17 +26,18 @@ public:
     void stopMario();
     bool isMarioGoLeft();
     bool isMarioGoRight();
-    void jumpMario();
+    bool jumpMario();
     void dontJumpMario();
     void fixCrashing();
     void addPipe(Point position, int type);
+    void addFlag(Point Position, int type);
 private:
     Background background;
     Mario mario;
     std::vector<Block> blocks;
     std::vector<Kopa> kopas;
     std::vector<Pipe> pipes;
-    Flag flag;
+    std::vector<Flag> flag;
     Point cameraPosition;
 };
 

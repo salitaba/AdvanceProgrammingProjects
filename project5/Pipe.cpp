@@ -28,3 +28,7 @@ void Pipe::show(Window &window,Point cameraPosition){
     }
     window.draw_img(sourceImage, destinationRectangle);
 }
+
+Rectangle Pipe::getRectangle(){
+    return Rectangle(position,32,32);
+}

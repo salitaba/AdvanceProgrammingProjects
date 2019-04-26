@@ -36,6 +36,8 @@ Object::Object():cameraPosition(0,0){}
 
 void Object::updateScreen(Window &window){
     background.show(window, cameraPosition);
+    for(auto thisFlag : flag)
+        thisFlag.show(window, cameraPosition);
     for(auto pipe : pipes)
         pipe.show(window, cameraPosition);
     for(auto block : blocks)
@@ -52,7 +54,13 @@ void Object::updatePosition(int refreshRate, Window &window){
 }
 
 
-bool Object::isMarioOnFlag(){}
+bool Object::isMarioOnFlag(){
+    Accident accident;
+    for(auto thisflag : flag)
+        if(accident.check(mario.getRectangle(), thisflag.getRectangle()))
+            return true;
+    return false;
+}
 
 void Object::setMario(Point cell){
     mario = Mario(cell);
@@ -78,9 +86,16 @@ bool Object::isMarioGoRight(){ return mario.isGoRight(); }
 
 void Object::dontJumpMario(){  mario.dontJump(); }
 
-void Object::jumpMario(){ mario.jump(); }
+bool Object::jumpMario(){ return mario.jump(); }
 
 void Object::fixCrashing(){
+    for(auto pipe : pipes){
+        Rectangle rectangleFlag = pipe.getRectangle();
+        Point topLeft(rectangleFlag.x, rectangleFlag.y);
+        Point downRight(topLeft.x + rectangleFlag.w - 1, topLeft.y + rectangleFlag.h - 1);
+        cout<<topLeft.x<<" "<<topLeft.y<<" "<<downRight.x<<" "<<downRight.y<<endl;
+        mario.fixCrashingWithBlock(topLeft, downRight);
+    }
     for(auto block : blocks){
         Point topLeft = block.getCell();
         Point downRight(topLeft.x + block.getWidth() , topLeft.y + block.getHeight());
@@ -92,3 +107,7 @@ void Object::addPipe(Point position, int type){
     pipes.push_back(Pipe(position, type));
 }
 
+void Object::addFlag(Point position, int type){
+    cout<<type<<endl;
+    flag.push_back(Flag(position, type));
+}

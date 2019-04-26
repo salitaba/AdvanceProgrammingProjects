@@ -21,6 +21,7 @@ public:
         KOPA,
         PIPE,
         FLAG,
+        TOP_FLAG,
         PIPE_LEFT,
         PIPE_RIGHT,
         PIPE_TOP_LEFT,

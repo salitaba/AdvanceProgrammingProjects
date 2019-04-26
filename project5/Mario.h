@@ -21,8 +21,9 @@ public:
     bool isGoLeft();
     bool isGoRight();
     void dontJump();
-    void jump();
+    bool jump();
     void fixCrashingWithBlock(Point topLeft, Point downRight);
+    Rectangle getRectangle();
 private:
     Point position;
     Move movement;

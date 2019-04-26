@@ -49,35 +49,61 @@ bool Mario::isGoRight(){ return movement.isGoRight(); }
 
 void Mario::dontJump(){ movement.dontJump(); }
 
-void Mario::jump(){ movement.jump(); }
+bool Mario::jump(){ return movement.jump(); }
 
 void Mario::fixCrashingWithBlock(Point topLeft, Point downRight){
     // cout<< position.x << " "<< position.y<< " " ;
-    Point marioTopLeft = position, marioDownRight = Point(position.x + width, position.y + height);
-    Crash crash(movement.returnPreviuseLocation(), marioTopLeft, marioDownRight, topLeft, downRight);
-    Point newPosition = crash.downAccident();
-    Point leftCrashPosition = crash.leftAccident();
-    Point upCrashPosition = crash.upAccident();
-    if(leftCrashPosition.x != position.x || leftCrashPosition.y != position.y){
-        cout<<"LEFT"<<endl;
+    Point marioTopLeft = position, marioDownRight = Point(position.x + width - 1, position.y + height - 1);
+    Point previusePosition = movement.returnPreviuseLocation();
+    Rectangle deltaX(Point(position.x,previusePosition.y),width,height);
+    Accident accident;
+    if(accident.check(deltaX, Rectangle(topLeft,downRight))){
+        position.x = previusePosition.x;
         movement.leftAccident();
-        cout<<leftCrashPosition.x<<" "<<leftCrashPosition.y<<" "<<position.x<<" "<<position.y<<endl;
-        position = leftCrashPosition;
-         
-    }else if(newPosition.x != position.x || newPosition.y != position.y){
-        // cout<<"DOWN"<<endl;
-        // cout<<newPosition.x<<" "<<newPosition.y<<" "<<position.x<<" "<<position.y<<endl;
-        movement.downAccident();
-        position = newPosition;
-    }else if(upCrashPosition.x != position.x || upCrashPosition.y != position.y){
-        // cout<<"UP"<<endl;
-        // cout<<upCrashPosition.x<<" "<<upCrashPosition.y<<" "<<position.x<<" "<<position.y<<endl;
-        movement.upAccident();
-        position = upCrashPosition;
     }
+    Rectangle deltaY(Point(position.x,position.y),width,height);
+    if(accident.check(deltaY, Rectangle(topLeft,downRight))){
+        if(position.y > previusePosition.y)
+            movement.downAccident();
+        else 
+            movement.upAccident();
+        position.y = previusePosition.y;
+    }
+    // Crash crash(movement.returnPreviuseLocation(), marioTopLeft, marioDownRight, topLeft, downRight);
+    // Point newPosition = crash.downAccident();
+    // Point leftCrashPosition = crash.leftAccident();
+    // Point upCrashPosition = crash.upAccident();
+    // Point rightCrashPosition = crash.righAccident();
+    // if(leftCrashPosition.x != position.x || leftCrashPosition.y != position.y){
+    //     cout<<"LEFT"<<endl;
+    //     movement.leftAccident();
+    //     cout<<leftCrashPosition.x<<" "<<leftCrashPosition.y<<" "<<position.x<<" "<<position.y<<endl;
+    //     position = leftCrashPosition;
+         
+    // }else if(rightCrashPosition.x != position.x || rightCrashPosition.y != position.y){
+    //     cout<<"Right"<<endl;
+    //     movement.leftAccident();
+    //     cout<<leftCrashPosition.x<<" "<<leftCrashPosition.y<<" "<<position.x<<" "<<position.y<<endl;
+    //     position = rightCrashPosition;
+         
+    // }else if(newPosition.x != position.x || newPosition.y != position.y){
+    //     // cout<<"DOWN"<<endl;
+    //     // cout<<newPosition.x<<" "<<newPosition.y<<" "<<position.x<<" "<<position.y<<endl;
+    //     movement.downAccident();
+    //     position = newPosition;
+    // }else if(upCrashPosition.x != position.x || upCrashPosition.y != position.y){
+    //     // cout<<"UP"<<endl;
+    //     // cout<<upCrashPosition.x<<" "<<upCrashPosition.y<<" "<<position.x<<" "<<position.y<<endl;
+    //     movement.upAccident();
+    //     position = upCrashPosition;
+    // }
     
 
     // cout<< position.x << " " << position.y<< endl;
     // string s;
     // cin>>s;
+}
+
+Rectangle Mario::getRectangle(){
+    return Rectangle(position, width, height);
 }

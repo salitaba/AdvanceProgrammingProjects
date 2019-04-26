@@ -8,7 +8,7 @@ class Crash{
 public:
     Crash(Point _previuseTopLeft, Point _topLeft1,Point _topLeft2,Point _downRight1,Point _downRight2);
     Point leftAccident();
-    bool righAccident();
+    Point righAccident();
     Point upAccident();
     Point downAccident();
 private:

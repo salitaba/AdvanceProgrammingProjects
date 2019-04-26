@@ -16,7 +16,17 @@ void GameManager::start(){
         objects.updatePosition(screenRefreshRate, window);
         objects.fixCrashing();
         objects.updateScreen(window);
-        // objects.isMarioOnFlag()
+        if(objects.isMarioOnFlag()){
+            //cout<<"OK"<<endl;
+            window.stop_music();
+            window.play_sound_effect("assets/sounds/sound_effects/level-clear.wav");
+            while(true){
+                window.show_text("YOU WIN!", Point(window.get_width()/2 - 70, window.get_height()/2 - 10) );
+                window.update_screen();
+                this->handleEvent();
+                delay(30);
+            }
+        }
         while(SDL_GetTicks() - lastTimeScreenUpdate < 30){}
         lastTimeScreenUpdate = SDL_GetTicks();
         
@@ -46,8 +56,11 @@ void GameManager::handleEvent(){
                     objects.goMarioRight();
                 if( keyPressed == 'a')
                     objects.goMarioLeft();
-                if( keyPressed == 'w')
-                    objects.jumpMario();
+                if( keyPressed == 'w'){
+                    if(objects.jumpMario())
+                        window.play_sound_effect("assets/sounds/sound_effects/jump-small.wav");
+                }   
+                   
                 break;
         }
     }

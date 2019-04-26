@@ -21,6 +21,10 @@ Object Map::createObjects(){
                     objects.setMario(cell);
                     break;
                 case ObjectCode::FLAG_CHAR:
+                    if(map[i - 1][j] == ObjectCode::FLAG_CHAR)
+                        objects.addFlag(cell, ObjectCode::FLAG);
+                    else
+                        objects.addFlag(cell, ObjectCode::TOP_FLAG);
                     break;
                 case ObjectCode::LITTLE_GOMBA_CHAR:
                     break;
@@ -39,7 +43,6 @@ Object Map::createObjects(){
                         }
 
                     }
-
                     break;
                 case ObjectCode::KOPA_CHAR:
                     break;

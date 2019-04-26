@@ -2,6 +2,7 @@
 #define MOVE_H
 
 #include"RSDL/src/rsdl.hpp"
+#include"Accident.h"
 
 class Move{
 public:
@@ -14,7 +15,7 @@ public:
     bool isGoLeft();
     bool isGoRight();
     void dontJump();
-    void jump();
+    bool jump();
     int getVX();
     int getAX();
     bool isBeforTowardRight();
