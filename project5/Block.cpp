@@ -11,7 +11,7 @@
 #define DELAY_TIME 400
 using namespace std;
 
-Block::Block(Point _cell, int _type):type(_type), cell(_cell),coin(_cell,false){
+Block::Block(Point _cell, int _type):type(_type), cell(_cell),coin(_cell,false), mushroom(cell, false){
     questionSourceImage = PictureChanger(vector<string>({
         BLOCK_QUESTION_IMAGE_1, BLOCK_QUESTION_IMAGE_2, BLOCK_QUESTION_IMAGE_3}), DELAY_TIME);
     width = ObjectCode::DEFAULT_WIDTH, height = ObjectCode::DEFAULT_HEIGHT;
@@ -40,6 +40,7 @@ void Block::show(Window &window, Point cameraPosition){
         case ObjectCode::EMPTY_QUESTION_CHAR:
             sourceImage = questionSourceImage.getImageSource();
             coin.show(window, cameraPosition);
+            mushroom.show(window, cameraPosition);
             break;
     }
     Rectangle destinationRectangle(cell - cameraPosition, 32, 32);
@@ -66,6 +67,29 @@ bool Block::accident(){
             type = ObjectCode::EMPTY_QUESTION_CHAR;
             //cout<<"COIN ACCIDENT"<<endl;
             coin = Coin(cell, true);
+            return 1;
             break;  
+        case ObjectCode::BLOCK_WITH_MUSHROOM_CHAR :
+            questionSourceImage = PictureChanger(vector<string>({BLOCK_EMPTY_QUESTION_IMAGE}), 300);
+            type = ObjectCode::EMPTY_QUESTION_CHAR;
+            mushroom = MushRoom(cell, true);
     }
+    return 0;
+}
+
+void Block::mushroomFixCrashing(Point topLeft, Point downRight){
+    mushroom.fixCrashing(topLeft, downRight);
+}
+
+void Block::mushroomUpdatePosition(int refreshRate, Point cameraPosition){
+    mushroom.updatePosition(refreshRate, cameraPosition);
+}
+
+Rectangle Block::getMushroomRectangle(){
+    return mushroom.getRectangle();
+}
+
+void Block::mushroomOffline(){
+    //cout<<"KO"<<endl;
+    mushroom.offline();
 }

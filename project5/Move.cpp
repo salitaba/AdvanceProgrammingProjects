@@ -63,7 +63,6 @@ bool Move::isBeforTowardRight(){ return beforTowardRight; }
 
 void Move::downAccident(){
     vy = 0;
-    // cout<<"DOWN ACCIDENT"<<endl;
     onGround = true;
 }
 
@@ -77,7 +76,6 @@ Point Move::returnPreviuseLocation(){
 
 void Move::upAccident(){
     vy = 0;
-    // onGround = false;
 }
 
 void Move::noAccident(){

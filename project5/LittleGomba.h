@@ -19,6 +19,7 @@ public:
     void die();
     bool isOnline();
 private:
+    int counter = 30;
     bool lived = true;
     Point position ;
     Move movement;

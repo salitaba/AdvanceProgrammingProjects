@@ -18,6 +18,21 @@ bool Accident::check(Rectangle a, Rectangle b){
     if(this->pointAccident(Point(downRightA.x, topLeftA.y), b))
         return true;
     //    cout<<a.x + a.w<<" "<<a.y<<" "<<b.x<<" "<<b.x + b.w<<" "<<b.y<<" "<<b.y + b.h<<endl;
+    swap(a,b);
+    topLeftA = Point(a.x, a.y);
+    downRightA = Point(a.x + a.w - 1, a.y + a.h - 1);
+    if(this->pointAccident(topLeftA, b))
+        return true; 
+    //cout<<a.x + a.w<<" "<<a.y<<" "<<b.x<<" "<<b.x + b.w<<" "<<b.y<<" "<<b.y + b.h<<endl;
+    if(this->pointAccident(downRightA, b))
+        return true;
+    //    cout<<a.x + a.w<<" "<<a.y<<" "<<b.x<<" "<<b.x + b.w<<" "<<b.y<<" "<<b.y + b.h<<endl;
+    if(this->pointAccident(Point(topLeftA.x, downRightA.y), b))
+        return true;
+    //    cout<<a.x + a.w<<" "<<a.y<<" "<<b.x<<" "<<b.x + b.w<<" "<<b.y<<" "<<b.y + b.h<<endl;
+    if(this->pointAccident(Point(downRightA.x, topLeftA.y), b))
+        return true;
+    //    cout<<a.x + a.w<<" "<<a.y<<" "<<b.x<<" "<<b.x + b.w<<" "<<b.y<<" "<<b.y + b.h<<endl;
     return false;
 }
 

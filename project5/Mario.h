@@ -6,7 +6,7 @@
 #include"Move.h"
 #include"Crash.h"
 #include"ObjectCode.h"
-
+#include"PictureChanger.h"
 
 class Mario{
 public:
@@ -28,13 +28,21 @@ public:
     bool stoped();
     void die();
     Rectangle getRectangle();
+    void goBig();
+    bool isBig();
+    void goLittle();
 private:
     bool lived = true;
+    bool biged = false;
     Point position;
     Move movement;
     int width, height;
     std::string marioSourceImage;
     int lastTimeImageUpdate;
+    PictureChanger sourceLeftWalking;
+    PictureChanger sourceRightWalking;
+    PictureChanger sourceBigLeftWalking;
+    PictureChanger sourceBigRightWalking;
     
 };
 

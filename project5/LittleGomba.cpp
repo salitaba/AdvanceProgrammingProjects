@@ -12,8 +12,11 @@ LittleGomba::LittleGomba(Point _position):position(_position),movement(_position
 }
 
 void LittleGomba::show(Window &window, Point cameraPosition){
+    if(counter == 0 && lived == false)
+        return;
+    if(lived == false && counter>0)
+        counter--;
     Point realPosition(position.x - cameraPosition.x, position.y);
-    // cout<<"OK"<<endl;
     window.draw_img(sourceImage.getImageSource(), Rectangle(realPosition, 32, 32));
 }
 
@@ -71,11 +74,14 @@ Rectangle LittleGomba::getRectangle(){
 }
 
 void LittleGomba::die(){
-    lived = false;
     cout<<"OK"<<endl;
+    lived = false;
+    counter = 30;
+    //cout<<"OK"<<endl;
     sourceImage = PictureChanger(vector<string>({SOURCE_IMAGE_DIE_LITTLE_GOMBA}), 300);
 }
 
 bool LittleGomba::isOnline(){
+    
     return lived;
 }

@@ -35,7 +35,9 @@ public:
     void addKopa(Point position);
     bool checkGameOver(Window &window);
     void addLittleGomba(Point position);
+    void showHeader(Window &window);
 private:
+    int coin ;
     Background background;
     Mario mario;
     std::vector<Block> blocks;

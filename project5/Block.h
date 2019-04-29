@@ -6,6 +6,7 @@
 #include"ObjectCode.h"
 #include"PictureChanger.h"
 #include"Coin.h"
+#include"MushRoom.h"
 
 class Block{
 public:
@@ -15,6 +16,10 @@ public:
     int getHeight();
     int getWidth();
     bool accident();
+    void mushroomFixCrashing(Point topLeft, Point downRight);
+    void mushroomUpdatePosition(int refreshRate, Point cameraPosition);
+    Rectangle getMushroomRectangle();
+    void mushroomOffline();
 private:
     int type;
     Point cell;
@@ -22,6 +27,8 @@ private:
     std::string sourceImage;
     PictureChanger questionSourceImage;
     Coin coin;
+    MushRoom mushroom;
+    bool online = true;
 };
 
 
