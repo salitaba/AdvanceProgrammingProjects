@@ -35,12 +35,17 @@ using namespace std;
 Object::Object():cameraPosition(0,0){}
 
 void Object::updateScreen(Window &window){
+    // cout<<littleGombas.size()<<endl;
     background.show(window, cameraPosition);
+    for(auto littleGomba : littleGombas)
+        littleGomba.show(window, cameraPosition);
+    for(auto kopa : kopas)
+        kopa.show(window, cameraPosition);
     for(auto thisFlag : flag)
         thisFlag.show(window, cameraPosition);
     for(auto pipe : pipes)
         pipe.show(window, cameraPosition);
-    for(auto block : blocks)
+    for(auto &block : blocks)
         block.show(window, cameraPosition);
     mario.show(window, cameraPosition);
     window.update_screen();
@@ -48,6 +53,10 @@ void Object::updateScreen(Window &window){
 
 void Object::updatePosition(int refreshRate, Window &window){
     mario.updatePosition(refreshRate);
+    for(int i = 0 ;i < kopas.size();i++)
+        kopas[i].updatePosition(refreshRate, cameraPosition, window);
+    for(int i = 0 ;i < littleGombas.size();i++)
+        littleGombas[i].updatePosition(refreshRate, cameraPosition, window);
     int center = window.get_width() / 2;
     if( mario.getPosition().x > cameraPosition.x + center)
         cameraPosition.x = mario.getPosition().x - center;
@@ -89,18 +98,83 @@ void Object::dontJumpMario(){  mario.dontJump(); }
 bool Object::jumpMario(){ return mario.jump(); }
 
 void Object::fixCrashing(){
+    Accident accident;
+    int bestType = 0, onGround = 0;
+    Rectangle position = mario.getRectangle();
+    position = Rectangle(Point(position.x,position.y),position.w,position.h + 1);
     for(auto pipe : pipes){
         Rectangle rectangleFlag = pipe.getRectangle();
         Point topLeft(rectangleFlag.x, rectangleFlag.y);
         Point downRight(topLeft.x + rectangleFlag.w - 1, topLeft.y + rectangleFlag.h - 1);
-        cout<<topLeft.x<<" "<<topLeft.y<<" "<<downRight.x<<" "<<downRight.y<<endl;
-        mario.fixCrashingWithBlock(topLeft, downRight);
+        onGround |= accident.check(position, rectangleFlag);
+        // cout<<topLeft.x<<" "<<topLeft.y<<" "<<downRight.x<<" "<<downRight.y<<endl;
+        int typeOfAccident = mario.fixCrashingWithBlock(topLeft, downRight);    
+        bestType = max(bestType, typeOfAccident);
+        for(int  i = 0 ;i < kopas.size() ; i++)
+            kopas[i].fixCrashingWithBlock(topLeft, downRight);
+        for(int  i = 0 ;i < littleGombas.size() ; i++)
+            littleGombas[i].fixCrashingWithBlock(topLeft, downRight);
+
+        position = mario.getRectangle();
+        position = Rectangle(Point(position.x,position.y),position.w,position.h + 1);
     }
-    for(auto block : blocks){
-        Point topLeft = block.getCell();
-        Point downRight(topLeft.x + block.getWidth() , topLeft.y + block.getHeight());
-        mario.fixCrashingWithBlock(topLeft, downRight);
+    // cout<<bestType<<endl;
+    for(int i = 0; i < blocks.size(); i++){
+        Point topLeft = blocks[i].getCell();
+        Point downRight(topLeft.x + blocks[i].getWidth() , topLeft.y + blocks[i].getHeight());
+        int typeOfAccident = mario.fixCrashingWithBlock(topLeft, downRight);
+        if(typeOfAccident == 3){
+            blocks[i].accident();
+        }
+        onGround |= accident.check(position, Rectangle(topLeft,downRight));
+        bestType = max(bestType, typeOfAccident);
+        for(int  i = 0 ;i < kopas.size() ; i++)
+            kopas[i].fixCrashingWithBlock(topLeft, downRight);
+        for(int  i = 0 ;i < littleGombas.size() ; i++)
+            littleGombas[i].fixCrashingWithBlock(topLeft, downRight);
+
+        position = mario.getRectangle();
+        position = Rectangle(Point(position.x,position.y),position.w,position.h + 1);
     }
+    
+    
+    for(int i = 0; i < kopas.size(); i++){
+        Rectangle rectangle = kopas[i].getRectangle();
+        Point topLeft(rectangle.x, rectangle.y);
+        Point downRight(rectangle.x + rectangle.w - 1 , rectangle.y + rectangle.h - 1);
+        int typeOfAccident = mario.fixCrashingWithBlock(topLeft, downRight);
+        onGround |= accident.check(position, rectangle);
+        bestType = max(bestType, typeOfAccident);
+         if(typeOfAccident == 1 || typeOfAccident == 3)
+             mario.die();
+        // else if(typeOfAccident == 2)
+        //     kopas[i].die();
+        position = mario.getRectangle();
+        position = Rectangle(Point(position.x,position.y),position.w,position.h + 1);
+    }
+
+    for(int i = 0; i < littleGombas.size(); i++){
+        Rectangle rectangle = littleGombas[i].getRectangle();
+        Point topLeft(rectangle.x, rectangle.y);
+        Point downRight(rectangle.x + rectangle.w - 1 , rectangle.y + rectangle.h - 1);
+        if(littleGombas[i].isOnline() == false)
+            continue;
+        int typeOfAccident = mario.fixCrashingWithBlock(topLeft, downRight);
+        onGround |= accident.check(position, rectangle);
+        bestType = max(bestType, typeOfAccident);
+        //cout<<typeOfAccident<<endl;
+        if(typeOfAccident == 1 || typeOfAccident == 3)
+             mario.die();
+        else if(typeOfAccident == 2)
+             littleGombas[i].die();
+        position = mario.getRectangle();
+        position = Rectangle(Point(position.x,position.y),position.w,position.h + 1);
+    }
+    mario.cantJump();
+    // cout<<onGround<<endl;
+    if(onGround)
+        mario.canJump();
+
 }
 
 void Object::addPipe(Point position, int type){
@@ -108,6 +182,21 @@ void Object::addPipe(Point position, int type){
 }
 
 void Object::addFlag(Point position, int type){
-    cout<<type<<endl;
+    // cout<<type<<endl;
     flag.push_back(Flag(position, type));
+}
+
+void Object::addKopa(Point position){
+    kopas.push_back(Kopa(position));
+}
+
+bool Object::checkGameOver(Window &window){
+    Point marioPosition = mario.getPosition();
+    if(marioPosition.y > window.get_height())
+        return true;
+    return false;   
+}
+
+void Object::addLittleGomba(Point position){
+    littleGombas.push_back(LittleGomba(position));
 }

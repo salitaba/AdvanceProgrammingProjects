@@ -27,6 +27,7 @@ Object Map::createObjects(){
                         objects.addFlag(cell, ObjectCode::TOP_FLAG);
                     break;
                 case ObjectCode::LITTLE_GOMBA_CHAR:
+                    objects.addLittleGomba(cell);
                     break;
                 case ObjectCode::PIPE_CHAR:
                     if(map[i][j + 1] == ObjectCode::PIPE_CHAR){
@@ -45,6 +46,7 @@ Object Map::createObjects(){
                     }
                     break;
                 case ObjectCode::KOPA_CHAR:
+                    objects.addKopa(cell);
                     break;
                 default:
                     objects.addBlock(cell, map[i][j]);

@@ -22,9 +22,14 @@ public:
     bool isGoRight();
     void dontJump();
     bool jump();
-    void fixCrashingWithBlock(Point topLeft, Point downRight);
+    int fixCrashingWithBlock(Point topLeft, Point downRight);
+    void canJump();
+    void cantJump();
+    bool stoped();
+    void die();
     Rectangle getRectangle();
 private:
+    bool lived = true;
     Point position;
     Move movement;
     int width, height;

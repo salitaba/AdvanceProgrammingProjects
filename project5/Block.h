@@ -4,6 +4,8 @@
 #include<string>
 #include"RSDL/src/rsdl.hpp"
 #include"ObjectCode.h"
+#include"PictureChanger.h"
+#include"Coin.h"
 
 class Block{
 public:
@@ -12,11 +14,14 @@ public:
     Point getCell();
     int getHeight();
     int getWidth();
+    bool accident();
 private:
     int type;
     Point cell;
     int width, height;
     std::string sourceImage;
+    PictureChanger questionSourceImage;
+    Coin coin;
 };
 
 

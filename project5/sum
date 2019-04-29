@@ -1,0 +1,783 @@
+#include"Accident.h"
+
+using namespace std;
+
+bool Accident::check(Rectangle a, Rectangle b){
+    //cout<<a.x + a.w<<" "<<a.y<<" "<<b.x<<" "<<b.x + b.w<<" "<<b.y<<" "<<b.y + b.h<<endl;
+    Point topLeftA(a.x, a.y);
+    Point downRightA(a.x + a.w - 1, a.y + a.h - 1);
+    if(this->pointAccident(topLeftA, b))
+        return true; 
+    //cout<<a.x + a.w<<" "<<a.y<<" "<<b.x<<" "<<b.x + b.w<<" "<<b.y<<" "<<b.y + b.h<<endl;
+    if(this->pointAccident(downRightA, b))
+        return true;
+    //    cout<<a.x + a.w<<" "<<a.y<<" "<<b.x<<" "<<b.x + b.w<<" "<<b.y<<" "<<b.y + b.h<<endl;
+    if(this->pointAccident(Point(topLeftA.x, downRightA.y), b))
+        return true;
+    //    cout<<a.x + a.w<<" "<<a.y<<" "<<b.x<<" "<<b.x + b.w<<" "<<b.y<<" "<<b.y + b.h<<endl;
+    if(this->pointAccident(Point(downRightA.x, topLeftA.y), b))
+        return true;
+    //    cout<<a.x + a.w<<" "<<a.y<<" "<<b.x<<" "<<b.x + b.w<<" "<<b.y<<" "<<b.y + b.h<<endl;
+    return false;
+}
+
+bool Accident::pointAccident(Point a, Rectangle b){
+    int x1 = b.x, x2 = b.x + b.w - 1, y1 = b.y, y2 = b.y + b.h - 1;
+    if(a.x >= x1 && a.x <= x2 && a.y >= y1 && a.y <= y2)
+        return true;
+    return false;
+}#include"Background.h"
+
+#define BACKGROUND_PATH "assets/background_image.png"
+
+using namespace std;
+
+Background::Background(){}
+
+
+void Background::show(Window &window, Point cameraPosition){
+    int cnt = 200;
+    for(int i= 0 ;i< 200;i++){
+        window.draw_img(BACKGROUND_PATH, Rectangle(Point(i * 2000 - cameraPosition.x , 0),
+                        Point((i+1) * 2000 - cameraPosition.x,window.get_height())));
+    }
+}#include"Block.h"
+
+#define BLOCK_ON_GROUND_IMAGE "assets/sprites/objects/bricks_blocks/clay.png"
+#define BRICK_SOURCE_IMAGE "assets/sprites/objects/bricks_blocks/brick.png"
+#define BLOCK_COIN_IMAGE "assets/sprites/objects/bricks_blocks/question-1.png"
+#define BLOCK_QUESTION_IMAGE "assets/sprites/objects/bricks_blocks/question-1.png"
+#define BLOCK_IMAGE "assets/sprites/objects/bricks_blocks/block.png"
+
+using namespace std;
+
+Block::Block(Point _cell, int _type):type(_type), cell(_cell){
+    switch(type){
+        case ObjectCode::BLOCK_ON_GROUND_CHAR:
+            sourceImage = BLOCK_ON_GROUND_IMAGE ;
+            break;
+        case ObjectCode::BRICK_CHAR:
+            sourceImage = BRICK_SOURCE_IMAGE;
+            break;
+        case ObjectCode::BLOCK_COIN_CHAR:
+            sourceImage = BLOCK_QUESTION_IMAGE;
+            break;
+        case ObjectCode::BLOCK_WITH_MUSHROOM_CHAR:
+            sourceImage = BLOCK_QUESTION_IMAGE;
+            break;
+        case ObjectCode::BLOCK_WITH_HEALTH_CHAR:
+            sourceImage = BLOCK_QUESTION_IMAGE;
+            break;
+        case ObjectCode::BLOCK_CHAR:
+            sourceImage = BLOCK_IMAGE;
+    }
+    width = ObjectCode::DEFAULT_WIDTH, height = ObjectCode::DEFAULT_HEIGHT;
+}
+
+void Block::show(Window &window, Point cameraPosition){
+    Rectangle destinationRectangle(cell - cameraPosition, 32, 32);
+    window.draw_img(sourceImage, destinationRectangle); 
+}
+
+Point Block::getCell(){
+    return cell;
+}
+
+int Block::getWidth(){
+    return width;
+}
+
+int Block::getHeight(){
+    return height;
+}#include"Cell.h"
+
+Cell::Cell(int _x, int _y): x(_x), y(_y){}
+
+Cell::Cell(): x(0), y(0){}#include"Crash.h"
+
+Crash::Crash(Point _previuseTopLeft, Point _topLeft1 ,Point _downRight1,Point _topLeft2,Point _downRight2)
+    :   topLeft1(_topLeft1), topLeft2(_topLeft2), downRight1(_downRight1), downRight2(_downRight2),
+        previuseTopLeft(_previuseTopLeft){}
+
+Point Crash::leftAccident(){
+    if (topLeft1.x >= topLeft2.x && topLeft1.x <= downRight2.x && 
+        !(topLeft1.y > downRight2.y || topLeft1.y < topLeft2.y))
+            return Point(previuseTopLeft.x, topLeft1.y);
+    return topLeft1;
+    // if(previuseTopLeft.x < topLeft1.x)
+    //     return topLeft1;
+    // if(topLeft1.y > previuseTopLeft.y){
+    //     int height = downRight1.y - topLeft1.y;
+    //     Line line(Point(previuseTopLeft.x, previuseTopLeft.y + height), Point(topLeft1.x, downRight1.y));
+    //     int crashPointY = line.getYWithX(downRight2.x);
+    //     if(crashPointY <= downRight2.y && crashPointY >= topLeft2.y && topLeft1.x <= downRight2.x && topLeft1.x >= topLeft2.x
+    //         && topLeft1.y >= topLeft2.y && topLeft1.y <= downRight2.y)
+    //         // return Point(downRight2.x + 1, crashPointY - height );
+    //         return Point(previuseTopLeft.x+2,topLeft1.y);
+    //     else
+    //         return topLeft1;
+    // }else{
+    //     Line line(previuseTopLeft, topLeft1);
+    //     int crashPointY = line.getYWithX(downRight2.x);
+    //     if(crashPointY <= downRight2.y && crashPointY >= topLeft2.y && topLeft1.x <= downRight2.x && topLeft1.x >= topLeft2.x
+    //         && topLeft1.y >= topLeft2.y && topLeft1.y <= downRight2.y)
+    //         // return Point(downRight2.x + 1, crashPointY);
+    //         return Point(previuseTopLeft.x+2,topLeft1.y);
+    //     else
+    //         return topLeft1;
+    // }
+}
+
+Point Crash::righAccident(){
+    // return topLeft2.x < downRight1.x && topLeft1.x < downRight2.x &&
+    //     !(topLeft1.y > downRight2.y || topLeft2.y > downRight1.y);
+    int width = downRight1.x - topLeft1.x;
+    if(downRight1.x >= topLeft2.x && downRight1.x <= downRight2.x &&
+        !(topLeft1.y > downRight2.y || topLeft1.y < topLeft2.y))
+        return Point(previuseTopLeft.x, topLeft1.y);
+    return topLeft1;
+}
+
+Point Crash::downAccident(){
+    if(downRight1.y >= topLeft2.y && topLeft1.y <= topLeft2.y &&
+            !(topLeft1.x > downRight2.x || downRight1.x < topLeft2.x)){
+        int height = downRight1.y - topLeft1.y ;
+        return Point(topLeft1.x,topLeft2.y - height);
+        // return Point(topLeft1.x,previuseTopLeft.y);
+    }
+    return topLeft1;
+}
+
+Point Crash::upAccident(){
+    if( topLeft1.y < downRight2.y && topLeft2.y < downRight1.y &&
+        !(topLeft1.x > downRight2.x || downRight1.x < topLeft2.x)){
+        //return Point(topLeft1.x, downRight2.y + 1);
+        return previuseTopLeft;
+        }
+    return topLeft1;
+}#include"Flag.h"
+
+#define FLAG_SOURCE_IMAGE "assets/sprites/objects/flag/body.png"
+#define TOP_FLAG_SOURCE_IMAGE "assets/sprites/objects/flag/head.png"
+
+using namespace std;
+
+Flag::Flag():position(Point(0,0)){}
+
+Flag::Flag(Point _position, int _type):position(_position), type(_type){}
+
+void Flag::show(Window &window, Point cameraPosition){
+    Rectangle destinationRectangle(Point(position.x - cameraPosition.x, position.y), 32, 32);
+    string sourceImage;
+    // cout<<ObjectCode::FLAG<<" "<<type<<" "<<ObjectCode::TOP_FLAG<<endl;
+    switch(type){
+        case ObjectCode::FLAG :
+            sourceImage = FLAG_SOURCE_IMAGE;
+            break;
+        case ObjectCode::TOP_FLAG :
+            sourceImage = TOP_FLAG_SOURCE_IMAGE;
+            break;
+    }
+    // cout<<sourceImage<<endl;
+    window.draw_img(sourceImage, destinationRectangle);
+}
+
+Rectangle Flag::getRectangle(){
+    return Rectangle(position,32,32);
+}#include"GameManager.h"
+
+using namespace std;
+
+GameManager::GameManager(Map map, Window &_window, int _screenRefreshRate) 
+    : screen(window), window(_window) ,objects(map.createObjects()), lastTimeScreenUpdate(SDL_GetTicks()){
+    screenRefreshRate = _screenRefreshRate;
+}
+
+void GameManager::start(){
+    window.play_music("assets/sounds/Super Mario Bros. theme music.mp3");
+    bool online = true ;
+    while(online == true){
+        window.clear();
+        this->handleEvent();
+        objects.updatePosition(screenRefreshRate, window);
+        objects.fixCrashing();
+        objects.updateScreen(window);
+        if(objects.checkGameOver(window)){
+            window.stop_music();
+            window.play_sound_effect("assets/sounds/sound_effects/gameover.wav");
+            delay(3000);
+            return; 
+        }
+        if(objects.isMarioOnFlag()){
+            //cout<<"OK"<<endl;
+            window.stop_music();
+            window.play_sound_effect("assets/sounds/sound_effects/level-clear.wav");
+            while(true){
+                window.show_text("YOU WIN!", Point(window.get_width()/2 - 70, window.get_height()/2 - 10), RED);
+                window.update_screen();
+                this->handleEvent();
+                delay(30);
+            }
+        }
+        while(SDL_GetTicks() - lastTimeScreenUpdate < 30){}
+        lastTimeScreenUpdate = SDL_GetTicks();
+        
+    }
+}
+
+void GameManager::handleEvent(){
+    while(window.has_pending_event()) {    
+        char keyPressed, keyRealized;
+        Event event = window.poll_for_event();
+        switch(event.get_type()) {
+            case Event::QUIT :
+                abort();
+                break;
+            case Event::KEY_RELEASE :
+                keyRealized = event.get_pressed_key();
+                if( keyRealized == 'd' and objects.isMarioGoRight())
+                    objects.stopMario();
+                if( keyRealized == 'a' and objects.isMarioGoLeft())
+                    objects.stopMario();
+                if( keyRealized == 'w')
+                    objects.dontJumpMario();
+                break;
+            case Event::KEY_PRESS :
+                keyPressed = event.get_pressed_key();
+                if( keyPressed == 'd')
+                    objects.goMarioRight();
+                if( keyPressed == 'a')
+                    objects.goMarioLeft();
+                if( keyPressed == 'w'){
+                    if(objects.jumpMario())
+                        window.play_sound_effect("assets/sounds/sound_effects/jump-small.wav");
+                }   
+                   
+                break;
+        }
+    }
+}#include"Kopa.h"
+
+Kopa::Kopa(Point _position):position(_position){}
+
+void Kopa::show(Window &window, Point cameraPosition){
+    Point cell(position.x - cameraPosition.x, position.y);
+    window.draw_img("assets/sprites/enemies/koopa_troopa/walking-left-1.png",Rectangle(cell, 24,32));
+}
+
+#include"Line.h"
+
+using namespace std;
+
+Line::Line(Point A, Point B):a(A), b(B){}
+
+int Line::getYWithX(int x){
+    if(a.x == b.x)
+        return a.y;
+    double slope = double(b.y - a.y) / double(b.x - a.x);
+    double constance = double(a.y) - slope * a.x;
+    return slope * x + constance ;
+}
+
+int Line::getXWithY(int y){
+    if(a.y == b.y)
+        return a.x;
+    double slope = double(b.x - a.x) / double(a.y - b.y);
+    double constance = double(a.x) - slope * a.y;
+    return slope * y + constance;
+}
+#include"LittleGomba.h"
+
+using namespace std;
+
+#define SOURCE_IMAGE_WALKING_GOMBA "assets/sprites/enemies/little_goomba/walking-1.png"
+
+LittleGomba::LittleGomba(Point _position):position(_position){}
+
+void LittleGomba::show(Window &window, Point cameraPosition){
+    Point realPosition(position.x - cameraPosition.x, position.y);
+    // cout<<"OK"<<endl;
+    window.draw_img(SOURCE_IMAGE_WALKING_GOMBA, Rectangle(realPosition, 32, 32));
+}#include<iostream>
+#include"RSDL/src/rsdl.hpp"
+#include"Map.h"
+#include"Screen.h"
+#include"GameManager.h"
+
+#define SCREEN_REFRESH_RATE 30
+
+
+using namespace std;
+int main(int argc , char* argv[]){
+    string s;
+    Map map(argv[1]);
+    Window window = map.getWindowFitMap();
+    GameManager game(map, window, SCREEN_REFRESH_RATE);
+    game.start();
+}
+#include"Map.h"
+
+using namespace std;
+
+Map::Map(string sourceAddress){
+    ifstream sourceMap (sourceAddress);
+    string line;
+    while(getline(sourceMap, line))
+        map.push_back(line);
+}
+
+Object Map::createObjects(){
+    Object objects;
+    for(int i = 0; i < map.size(); i++)
+        for(int j = 0; j < map[i].size(); j++){
+            Point cell(j * ObjectCode::DEFAULT_WIDTH, i * ObjectCode::DEFAULT_HEIGHT);
+            switch(map[i][j]){
+                case ObjectCode::EMPTY_CELL_CHAR:
+                    break;
+                case ObjectCode::MARIO_CHAR:
+                    objects.setMario(cell);
+                    break;
+                case ObjectCode::FLAG_CHAR:
+                    if(map[i - 1][j] == ObjectCode::FLAG_CHAR)
+                        objects.addFlag(cell, ObjectCode::FLAG);
+                    else
+                        objects.addFlag(cell, ObjectCode::TOP_FLAG);
+                    break;
+                case ObjectCode::LITTLE_GOMBA_CHAR:
+                    objects.addLittleGomba(cell);
+                    break;
+                case ObjectCode::PIPE_CHAR:
+                    if(map[i][j + 1] == ObjectCode::PIPE_CHAR){
+                        if(map[i - 1][j] == ObjectCode::PIPE_CHAR){
+                            objects.addPipe(cell, ObjectCode::PIPE_LEFT);
+                        }else{
+                            objects.addPipe(cell, ObjectCode::PIPE_TOP_LEFT);
+                        }
+                    }else{
+                        if(map[i - 1][j] == ObjectCode::PIPE_CHAR){
+                            objects.addPipe(cell, ObjectCode::PIPE_RIGHT);
+                        }else{
+                            objects.addPipe(cell, ObjectCode::PIPE_TOP_RIGHT);
+                        }
+
+                    }
+                    break;
+                case ObjectCode::KOPA_CHAR:
+                    objects.addKopa(cell);
+                    break;
+                default:
+                    objects.addBlock(cell, map[i][j]);
+                    break;
+            }
+        }
+    return objects;
+}
+
+
+Window Map::getWindowFitMap(){
+    return Window(ObjectCode::DEFAULT_WIDTH * ObjectCode::NUMBER_OF_CULOMN, map.size() * ObjectCode::DEFAULT_HEIGHT);
+}
+
+
+
+
+
+#include"Mario.h"
+
+#define MARIO_SOURCE_IMAGE_RIGHT "assets/sprites/mario/normal/walking-right-1.png"
+#define MARIO_SOURCE_IMAGE_LEFT "assets/sprites/mario/normal/walking-left-1.png"
+#define MARIO_SOURCE_IMAGE_STANDING_LEFT "assets/sprites/mario/normal/standing-left.png"
+#define MARIO_SOURCE_IMAGE_STANDING_RIGHT "assets/sprites/mario/normal/standing-right.png"
+using namespace std;
+
+Mario::Mario(): position(0,0), lastTimeImageUpdate(SDL_GetTicks()), movement(Point(0,0)){}
+
+Mario::Mario(Point cell)
+    : position(cell), movement(cell), lastTimeImageUpdate(SDL_GetTicks()){ 
+    marioSourceImage = MARIO_SOURCE_IMAGE_STANDING_RIGHT;
+    width = 24, height = ObjectCode::DEFAULT_HEIGHT;
+}
+
+void Mario::show(Window &window, Point cameraPosition){
+    Rectangle rectangle(position - cameraPosition, 24, 32);
+    if(movement.getVX() > 0)
+        marioSourceImage = MARIO_SOURCE_IMAGE_RIGHT;
+    else if(movement.getVX() < 0)
+        marioSourceImage = MARIO_SOURCE_IMAGE_LEFT;
+    else{
+        if(movement.getAX() > 0)
+            marioSourceImage = MARIO_SOURCE_IMAGE_RIGHT;
+        else if(movement.getAX() < 0)
+            marioSourceImage = MARIO_SOURCE_IMAGE_LEFT;
+        else if(movement.isBeforTowardRight() == true)
+            marioSourceImage = MARIO_SOURCE_IMAGE_STANDING_RIGHT;
+        else
+            marioSourceImage = MARIO_SOURCE_IMAGE_STANDING_LEFT;
+    }
+    window.draw_img(marioSourceImage, rectangle);
+}
+
+void Mario::goRight(){ movement.goRight(); }
+
+void Mario::goLeft(){ movement.goLeft(); }
+
+void Mario::stop(){ movement.stop(); }
+
+void Mario::updatePosition(int refreshRate){ position = movement.updatePosition(refreshRate, position); }
+
+Point Mario::getPosition(){ return position; }
+
+bool Mario::isGoLeft(){ return movement.isGoLeft(); }
+
+bool Mario::isGoRight(){ return movement.isGoRight(); }
+
+void Mario::dontJump(){ movement.dontJump(); }
+
+bool Mario::jump(){ return movement.jump(); }
+
+void Mario::fixCrashingWithBlock(Point topLeft, Point downRight){
+    // cout<< position.x << " "<< position.y<< " " ;
+    Point marioTopLeft = position, marioDownRight = Point(position.x + width - 1, position.y + height - 1);
+    Point previusePosition = movement.returnPreviuseLocation();
+    Rectangle deltaX(Point(position.x,previusePosition.y),width,height);
+    Accident accident;
+    if(accident.check(deltaX, Rectangle(topLeft,downRight))){
+        position.x = previusePosition.x;
+        movement.leftAccident();
+    }
+    Rectangle deltaY(Point(position.x,position.y),width,height);
+    if(accident.check(deltaY, Rectangle(topLeft,downRight))){
+        if(position.y > previusePosition.y)
+            movement.downAccident();
+        else 
+            movement.upAccident();
+        position.y = previusePosition.y;
+    }
+    // Crash crash(movement.returnPreviuseLocation(), marioTopLeft, marioDownRight, topLeft, downRight);
+    // Point newPosition = crash.downAccident();
+    // Point leftCrashPosition = crash.leftAccident();
+    // Point upCrashPosition = crash.upAccident();
+    // Point rightCrashPosition = crash.righAccident();
+    // if(leftCrashPosition.x != position.x || leftCrashPosition.y != position.y){
+    //     cout<<"LEFT"<<endl;
+    //     movement.leftAccident();
+    //     cout<<leftCrashPosition.x<<" "<<leftCrashPosition.y<<" "<<position.x<<" "<<position.y<<endl;
+    //     position = leftCrashPosition;
+         
+    // }else if(rightCrashPosition.x != position.x || rightCrashPosition.y != position.y){
+    //     cout<<"Right"<<endl;
+    //     movement.leftAccident();
+    //     cout<<leftCrashPosition.x<<" "<<leftCrashPosition.y<<" "<<position.x<<" "<<position.y<<endl;
+    //     position = rightCrashPosition;
+         
+    // }else if(newPosition.x != position.x || newPosition.y != position.y){
+    //     // cout<<"DOWN"<<endl;
+    //     // cout<<newPosition.x<<" "<<newPosition.y<<" "<<position.x<<" "<<position.y<<endl;
+    //     movement.downAccident();
+    //     position = newPosition;
+    // }else if(upCrashPosition.x != position.x || upCrashPosition.y != position.y){
+    //     // cout<<"UP"<<endl;
+    //     // cout<<upCrashPosition.x<<" "<<upCrashPosition.y<<" "<<position.x<<" "<<position.y<<endl;
+    //     movement.upAccident();
+    //     position = upCrashPosition;
+    // }
+    
+
+    // cout<< position.x << " " << position.y<< endl;
+    // string s;
+    // cin>>s;
+}
+
+Rectangle Mario::getRectangle(){
+    return Rectangle(position, width, height);
+}#include"Move.h"
+
+using namespace std;
+
+Move::Move(Point position):previuseLocation(position){}
+
+Point Move::updatePosition(int refreshRate,Point position){
+    previuseLocation = position;
+    if(vx < 0)
+        beforTowardRight = false;
+    else if(vx > 0)
+        beforTowardRight = true;
+    vx = vx + refreshRate * ax / 1000.0;
+    if(vx > 0){
+        vx = min(vx, 200.0);
+        vx = vx - fx * refreshRate / 1000.0;
+        if(ax == 0)
+            vx = max(vx, 0.0);
+    }else if(vx < 0){
+        vx = max(vx, -200.0);
+        vx = vx + fx * refreshRate / 1000.0;
+        if(ax == 0)
+            vx = min(vx, 0.0);
+
+    }
+    position.x += (int)(refreshRate * vx / 1000.0);
+
+    vy = vy + refreshRate * g / 1000.0;
+    position.y += (int)(refreshRate * vy / 1000.0);
+    return position;
+}
+
+void Move::goRight(){ ax = 1400 ; }
+
+void Move::goLeft(){ ax = -1400 ; }
+
+void Move::stop(){ ax = 0; }
+
+bool Move::isGoLeft(){ return ax < 0; }
+
+bool Move::isGoRight(){ return ax > 0; }
+
+void Move::dontJump(){ jumped = false; }
+
+bool Move::jump(){
+    if(onGround == true){
+        vy = -600;
+        onGround = false;
+        return true;
+    }
+    jumped = true;
+    return false;
+}
+
+int Move::getVX(){ return vx; }
+
+int Move::getAX(){ return ax; }
+
+bool Move::isBeforTowardRight(){return beforTowardRight; }
+
+void Move::downAccident(){
+    vy = 100;
+    onGround = true;
+}
+
+void Move::leftAccident(){
+    vx = 0;
+}
+
+Point Move::returnPreviuseLocation(){
+    return previuseLocation;
+}
+
+void Move::upAccident(){
+    vy = 0;
+}
+#include"ObjectCode.h"
+
+using namespace std;
+
+ObjectCode::ObjectCode(): objects({ "EMPTY_CELL", "MARIO", "BRICK", "BLOCK_COIN", "BLOCK_COIN", 
+                "BLOCK_WITH_MUSHROOM", "BLOCK_WITH_HEALTH", "BLOCK", "BLOCK_ON_GROUND",
+                "LITTLE_GOMBA", "KOPA", "PIPE", "FLAG" }){}
+
+int ObjectCode::getCode(string object){
+    for(int code = 0; code < 30 ;code++)
+        if(object == objects[code])
+            return code;
+}#include"Object.h"
+
+#define EMPTY_CELL_CHAR '.'
+#define MARIO_CHAR 'M'
+#define BRICK_CHAR 'b'
+#define BLOCK_COIN_CHAR '?'
+#define BLOCK_WITH_MUSHROOM_CHAR 'm'
+#define BLOCK_WITH_HEALTH_CHAR 'h'
+#define BLOCK_CHAR '@'
+#define BLOCK_ON_GROUND_CHAR '#'
+#define LITTLE_GOMBA_CHAR 'l'
+#define KOPA_CHAR 'k'
+#define PIPE_CHAR '|'
+#define FLAG_CHAR 'F'
+
+enum TypeCode{
+    EMPTY_CELL = 0,
+    MARIO,
+    BRICK,
+    BLOCK_COIN,
+    BLOCK_WITH_MUSHROOM,
+    BLOCK_WITH_HEALTH,
+    BLOCK,
+    BLOCK_ON_GROUND,
+    LITTLE_GOMBA,
+    KOPA,
+    PIPE,
+    FLAG,
+    NUMBER_OFTYPE
+};
+
+
+using namespace std; 
+
+Object::Object():cameraPosition(0,0){}
+
+void Object::updateScreen(Window &window){
+    // cout<<littleGombas.size()<<endl;
+    background.show(window, cameraPosition);
+    for(auto littleGomba : littleGombas)
+        littleGomba.show(window, cameraPosition);
+    for(auto kopa : kopas)
+        kopa.show(window, cameraPosition);
+    for(auto thisFlag : flag)
+        thisFlag.show(window, cameraPosition);
+    for(auto pipe : pipes)
+        pipe.show(window, cameraPosition);
+    for(auto block : blocks)
+        block.show(window, cameraPosition);
+    mario.show(window, cameraPosition);
+    window.update_screen();
+}
+
+void Object::updatePosition(int refreshRate, Window &window){
+    mario.updatePosition(refreshRate);
+    int center = window.get_width() / 2;
+    if( mario.getPosition().x > cameraPosition.x + center)
+        cameraPosition.x = mario.getPosition().x - center;
+}
+
+
+bool Object::isMarioOnFlag(){
+    Accident accident;
+    for(auto thisflag : flag)
+        if(accident.check(mario.getRectangle(), thisflag.getRectangle()))
+            return true;
+    return false;
+}
+
+void Object::setMario(Point cell){
+    mario = Mario(cell);
+}
+
+void Object::addBlock(Point cell, int type){
+    blocks.push_back(Block(cell, type));
+}
+
+void Object::goMarioRight(){
+    mario.goRight();
+}
+
+void Object::goMarioLeft(){
+    mario.goLeft();
+}
+
+void Object::stopMario(){ mario.stop(); }
+
+bool Object::isMarioGoLeft(){ return mario.isGoLeft(); }
+
+bool Object::isMarioGoRight(){ return mario.isGoRight(); }
+
+void Object::dontJumpMario(){  mario.dontJump(); }
+
+bool Object::jumpMario(){ return mario.jump(); }
+
+void Object::fixCrashing(){
+    for(auto pipe : pipes){
+        Rectangle rectangleFlag = pipe.getRectangle();
+        Point topLeft(rectangleFlag.x, rectangleFlag.y);
+        Point downRight(topLeft.x + rectangleFlag.w - 1, topLeft.y + rectangleFlag.h - 1);
+        // cout<<topLeft.x<<" "<<topLeft.y<<" "<<downRight.x<<" "<<downRight.y<<endl;
+        mario.fixCrashingWithBlock(topLeft, downRight);
+    }
+    for(auto block : blocks){
+        Point topLeft = block.getCell();
+        Point downRight(topLeft.x + block.getWidth() , topLeft.y + block.getHeight());
+        mario.fixCrashingWithBlock(topLeft, downRight);
+    }
+}
+
+void Object::addPipe(Point position, int type){
+    pipes.push_back(Pipe(position, type));
+}
+
+void Object::addFlag(Point position, int type){
+    // cout<<type<<endl;
+    flag.push_back(Flag(position, type));
+}
+
+void Object::addKopa(Point position){
+    kopas.push_back(Kopa(position));
+}
+
+bool Object::checkGameOver(Window &window){
+    Point marioPosition = mario.getPosition();
+    if(marioPosition.y > window.get_height())
+        return true;
+    return false;   
+}
+
+void Object::addLittleGomba(Point position){
+    littleGombas.push_back(LittleGomba(position));
+}#include"Pipe.h"
+
+#define PIPE_TOP_LEFT_SOURCE_IMAGE "assets/sprites/objects/pipe/head-left.png"
+#define PIPE_TOP_RIGHT_SOURCE_IMAGE "assets/sprites/objects/pipe/head-right.png"
+#define PIPE_LEFT_SOURCE_IMAGE "assets/sprites/objects/pipe/left.png"
+#define PIPE_RIGHT_SOURCE_IMAGE "assets/sprites/objects/pipe/right.png"
+
+using namespace std;
+
+Pipe::Pipe(Point _position, int _type): position(_position),type(_type){}
+
+void Pipe::show(Window &window,Point cameraPosition){
+    Rectangle destinationRectangle(Point(position.x - cameraPosition.x, position.y), 32, 32);
+    string sourceImage;
+    switch(type){
+        case ObjectCode::PIPE_LEFT :
+            sourceImage = PIPE_LEFT_SOURCE_IMAGE;
+            break;
+        case ObjectCode::PIPE_RIGHT :
+            sourceImage = PIPE_RIGHT_SOURCE_IMAGE;
+            break;
+        case ObjectCode::PIPE_TOP_LEFT :
+            sourceImage = PIPE_TOP_LEFT_SOURCE_IMAGE;
+            break;
+        case ObjectCode::PIPE_TOP_RIGHT :
+            sourceImage = PIPE_TOP_RIGHT_SOURCE_IMAGE;
+            break;
+    }
+    window.draw_img(sourceImage, destinationRectangle);
+}
+
+Rectangle Pipe::getRectangle(){
+    return Rectangle(position,32,32);
+}#include"Screen.h"
+
+using namespace std;
+
+Screen::Screen(Window &_window):window(_window){}
+
+void Screen::updateScreen(Object objects){
+    
+    window.update_screen();
+}#ifndef KOPA_H
+#define KOPA_H
+
+#include"RSDL/src/rsdl.hpp"
+
+class Kopa{
+public:
+    Kopa(Point _position);
+    void show(Window &window, Point cameraPosition);
+private:
+    Point position;
+};
+
+
+
+#endif #ifndef LITTLEGOMBA_H
+#define LITTLEGOMBA_H
+
+#include"RSDL/src/rsdl.hpp"
+
+class LittleGomba{
+public:
+    LittleGomba(Point _position);
+    void show(Window &window, Point cameraPosition);
+private:
+    Point position ;
+};
+
+#endif

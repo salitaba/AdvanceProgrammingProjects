@@ -26,6 +26,7 @@ public:
         PIPE_RIGHT,
         PIPE_TOP_LEFT,
         PIPE_TOP_RIGHT,
+        EMPTY_QUESTION,
         NUMBER_OFTYPE,
         
     };
@@ -43,6 +44,7 @@ public:
         KOPA_CHAR = 'k',
         PIPE_CHAR = '|',
         FLAG_CHAR = 'f',
+        EMPTY_QUESTION_CHAR = 'e',
         DEFAULT_WIDTH = 32,
         DEFAULT_HEIGHT = 32,
         NUMBER_OF_CULOMN = 30,

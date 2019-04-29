@@ -12,6 +12,7 @@
 #include"Map.h"
 #include"Block.h"
 #include"Accident.h"
+#include"LittleGomba.h"
 
 class Object{
 public:
@@ -31,6 +32,9 @@ public:
     void fixCrashing();
     void addPipe(Point position, int type);
     void addFlag(Point Position, int type);
+    void addKopa(Point position);
+    bool checkGameOver(Window &window);
+    void addLittleGomba(Point position);
 private:
     Background background;
     Mario mario;
@@ -38,6 +42,7 @@ private:
     std::vector<Kopa> kopas;
     std::vector<Pipe> pipes;
     std::vector<Flag> flag;
+    std::vector<LittleGomba> littleGombas;
     Point cameraPosition;
 };
 

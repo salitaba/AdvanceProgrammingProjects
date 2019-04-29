@@ -16,12 +16,18 @@ void GameManager::start(){
         objects.updatePosition(screenRefreshRate, window);
         objects.fixCrashing();
         objects.updateScreen(window);
+        if(objects.checkGameOver(window)){
+            window.stop_music();
+            window.play_sound_effect("assets/sounds/sound_effects/gameover.wav");
+            delay(3000);
+            return; 
+        }
         if(objects.isMarioOnFlag()){
             //cout<<"OK"<<endl;
             window.stop_music();
             window.play_sound_effect("assets/sounds/sound_effects/level-clear.wav");
             while(true){
-                window.show_text("YOU WIN!", Point(window.get_width()/2 - 70, window.get_height()/2 - 10) );
+                window.show_text("YOU WIN!", Point(window.get_width()/2 - 70, window.get_height()/2 - 10), RED);
                 window.update_screen();
                 this->handleEvent();
                 delay(30);
